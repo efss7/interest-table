@@ -1,2 +1,10 @@
+POST http://localhost:3003/client/insertAndView
+Content-Type: application/json
 
-
+{
+     "cpf": 798798798787,
+     "uf": "MG",
+     "birthData": "31/07/2002",
+     "loanAmount": 60000,
+     "amountPerMonth": 15000
+}
