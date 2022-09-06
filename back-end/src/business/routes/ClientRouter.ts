@@ -3,4 +3,5 @@ import clientBusiness from "../../controller/ClientController";
 
 export const clientRouter = Router();
 
-clientRouter.post("/insertAndView", clientBusiness.insertAndView);
+clientRouter.post("/simulation", clientBusiness.simulation);
+clientRouter.post("/insertinbank", clientBusiness.insertInBank)

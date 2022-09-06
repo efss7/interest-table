@@ -1,4 +1,4 @@
-POST http://localhost:3003/client/insertAndView
+POST http://localhost:3003/client/simulation
 Content-Type: application/json
 
 {
@@ -7,4 +7,62 @@ Content-Type: application/json
      "birthData": "31/07/2002",
      "loanAmount": 60000,
      "amountPerMonth": 15000
+}
+
+###
+
+POST http://localhost:3003/client/insertinbank
+Content-Type: application/json
+
+{
+     "cpf": 798798798787,
+     "rate": 0.01,
+     "birthData": "31/07/2002",
+     "loanAmount": 60000,
+     "amountPerMonth": 15000,
+     "infoPayment": {
+     "loanAmount": 60000,
+     "rate": 1,
+     "amountPerMonth": 15000,
+     "totalTerm": 5,
+     "totalInterest": 1545.527856,
+     "totalPayable": 61545.527856,
+     "simulator": [
+    {
+      "balanceDue": 60000,
+      "fees": 600,
+      "debtorWithInterest": 60600,
+      "pay": 45600,
+      "date": "06/09/2022"
+    },
+    {
+      "balanceDue": 45600,
+      "fees": 456,
+      "debtorWithInterest": 46056,
+      "pay": 31056,
+      "date": "06/10/2022"
+    },
+    {
+      "balanceDue": 31056,
+      "fees": 310.56,
+      "debtorWithInterest": 31366.56,
+      "pay": 16366.560000000001,
+      "date": "06/11/2022"
+    },
+    {
+      "balanceDue": 16366.560000000001,
+      "fees": 163.6656,
+      "debtorWithInterest": 16530.2256,
+      "pay": 1530.2256000000016,
+      "date": "06/12/2022"
+    },
+    {
+      "balanceDue": 1530.2256000000016,
+      "fees": 15.302256000000016,
+      "debtorWithInterest": 1545.5278560000015,
+      "pay": 0,
+      "date": "06/01/2023"
+    }
+  ]
+}
 }
