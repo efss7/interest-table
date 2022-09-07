@@ -23,14 +23,13 @@ export interface ClientDto {
     loanAmount: number;
     amountPerMonth: number
 }
-export interface InsertDB {
+export interface ClientDB {
     id: string;
     cpf: string;
     rate: UF;
     birthData: string;
     loanAmount: number;
     amountPerMonth: number;
-    infoPayment: string;
 }
 
 export interface InsertDto{
@@ -39,5 +38,4 @@ export interface InsertDto{
     birthData:string,
     loanAmount: number,
     amountPerMonth: number,
-    infoPayment: string
 }

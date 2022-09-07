@@ -1,5 +1,5 @@
 import { ClientData } from "../data/ClientData";
-import { ClientDto, InsertDB, InsertDto, UF } from "../model/Client";
+import { ClientDto, ClientDB, InsertDto, UF } from "../model/Client";
 import IdGenerator from "../services/IdGenerator";
 import { CustomError } from "./errors/CustomError";
 
@@ -10,7 +10,23 @@ export class ClientBusiness {
     ) { }
     simulation = async (inputs: ClientDto) => {
         try {
-            const {  uf, loanAmount, amountPerMonth } = inputs;
+            const { birthData, cpf, uf, loanAmount, amountPerMonth } = inputs;
+            console.log(cpf, this.checkCPFFormat(cpf))
+            if (!cpf || !this.checkCPFFormat(cpf)){
+                throw new CustomError(422, "CPF inválido");
+            }
+            if (!birthData){
+                throw new CustomError(422, "Data de nascimento não foi passada")
+            }
+            if(!uf){
+                throw new CustomError(422, "Estado não foi passado")
+            }
+            if (!loanAmount || loanAmount < 50000){
+                throw new CustomError(422, "Valor do empréstimo inválido")
+            }
+            if (!amountPerMonth || amountPerMonth < (loanAmount * 0.01)){
+                throw new CustomError(422, "Valor de parcela inválido")
+            }
             const rate = +UF[`${uf}`]
             const simulator = this.calculate(loanAmount, rate, amountPerMonth)
             const totalInterest = simulator.reduce((acc, current) => {
@@ -25,6 +41,10 @@ export class ClientBusiness {
         } catch (error: any) {
             throw new CustomError(error.statusCode, error.message)
         }
+    }
+    private checkCPFFormat = (cpf: string): boolean => {
+        const cpfValid = /^\d{3}.\d{3}.\d{3}-\d{2}$/
+        return cpfValid.test(cpf)
     }
     private calculate = (loanAmount: number, rate: number, amountPerMonth: number) => {
         const calculateAmount = (loanAmount: number, rate: number, amountPerMonth: number, month: number) => {
@@ -63,16 +83,30 @@ export class ClientBusiness {
     }
     insertInBank= async(inputs:InsertDto) => {
         try {
-            const { cpf, rate, birthData, loanAmount, amountPerMonth, infoPayment } = inputs;
+            const { cpf, rate, birthData, loanAmount, amountPerMonth } = inputs;
+            if (!cpf || !this.checkCPFFormat(cpf)) {
+                throw new CustomError(422, "CPF inválido");
+            }
+            if (!birthData) {
+                throw new CustomError(422, "Data de nascimento não foi passada")
+            }
+            if (!rate) {
+                throw new CustomError(422, "Taxa não foi passado")
+            }
+            if (!loanAmount || loanAmount < 50000) {
+                throw new CustomError(422, "Valor do empréstimo inválido")
+            }
+            if (!amountPerMonth || amountPerMonth < (loanAmount * 0.01)) {
+                throw new CustomError(422, "Valor de parcela inválido")
+            }
             const id = this.idGenerator.generateId()
-            const dicesOfClient: InsertDB = {
+            const dicesOfClient: ClientDB = {
                 id,
                 cpf,
                 rate,
                 birthData,
                 loanAmount,
                 amountPerMonth,
-                infoPayment: JSON.stringify(infoPayment)
             };
             await this.clientData.simulation(dicesOfClient);
         } catch (error: any) {
@@ -80,27 +114,15 @@ export class ClientBusiness {
         }
             
     }
+    select = async (): Promise<ClientDB[] | undefined> => {
+        try {
+            return this.clientData.select();
+        } catch (error: any) {
+            throw new CustomError(error.statusCode, error.message);
+        }
+    };
 }
 export default new ClientBusiness(
     new ClientData(),
     new IdGenerator()
 );
-
-
-// Formata para reais 
-
-// toLocaleString('pt-br', {
-//     style: 'currency', currency: 'BRL'
-// }),
-
-// const test = installments.map((formatMoney) => {
-//     Object.values(formatMoney).forEach((prop) => {
-//         if (typeof (prop) === "number") {
-//             prop.toLocaleString('pt-br', {
-//                 style: 'currency', currency: 'BRL'
-//             })
-//             console.log(prop)
-//             return prop;
-//         }
-//     })
-// })

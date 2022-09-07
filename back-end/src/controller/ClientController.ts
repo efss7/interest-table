@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import clientBusiness, { ClientBusiness } from "../business/ClientBusiness";
-import { ClientDto, InsertDB, InsertDto } from "../model/Client";
+import { ClientDto, InsertDto } from "../model/Client";
 
 export class ClientController {
     constructor(private clientBusiness: ClientBusiness) { };
@@ -17,11 +17,19 @@ export class ClientController {
     insertInBank = async (req: Request, res: Response): Promise<void> => {
         try {
             const { cpf, rate, birthData, loanAmount, amountPerMonth, infoPayment } = req.body
-            const inputs: InsertDto = { cpf, rate, birthData, loanAmount, amountPerMonth, infoPayment }
+            const inputs: InsertDto = { cpf, rate, birthData, loanAmount, amountPerMonth }
             await this.clientBusiness.insertInBank(inputs)
             res.status(201).send("Empréstimo efetivado")
         } catch (error: any) {
             res.status(error.statusCode || 400).send({ error: error.message })
+        }
+    }
+    select = async (req: Request, res: Response): Promise<void> => {
+        try {
+            const result = await this.clientBusiness.select()
+            res.status(200).send(result)
+        } catch (error: any) {
+            res.status(error.statusCode || 400).send({ error: error.message });
         }
     }
 

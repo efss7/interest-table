@@ -5,3 +5,4 @@ export const clientRouter = Router();
 
 clientRouter.post("/simulation", clientBusiness.simulation);
 clientRouter.post("/insertinbank", clientBusiness.insertInBank)
+clientRouter.get("/select", clientBusiness.select)
